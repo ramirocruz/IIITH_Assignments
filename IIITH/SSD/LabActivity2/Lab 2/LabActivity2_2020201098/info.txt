@@ -1,0 +1,18 @@
+the string is
+he
+of
+an
+sanju
+cricket
+badminton
+football
+volleyball
+parrot
+input the input file
+1 st number
+2nd number
+#this is comment
+an
+llobarll
+strng is a start
+string is a sanju
