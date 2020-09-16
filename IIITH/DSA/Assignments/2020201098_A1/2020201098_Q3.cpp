@@ -159,14 +159,15 @@ void clear()
   
 }
 void resize(int n,T data)
-{
+{   
     if(n<s)
     {
         bptr = (fptr + n-1)%cap;
         s=n;
     }
     else if(n <= cap)
-    {
+    {   
+        
         for(int i=1;i<(n-s+1);i++)
         {   
             head[(i+bptr)%cap]=data;
