@@ -1,7 +1,9 @@
 # SSD Assignment 1
 ### There are some mentioned dependencies to run the file if required.
 ## Q1
-* I had used the `rename` command since the task has to be performed in one command but since only local command had to be used I used `mv` inside `for` loop. I have commented the rename command part also for reference.
+* I had used the `rename` command since the task has to be performed in one command but since only local command had to be used I used `mv` inside `for` loop.
+* But since looping seems to be out of question I have used `find` command with `mv`.
+* I have commented the `rename` command and `loop` part also for reference.
 * I have filled some data inside the text files to show the working of sort
 * I have also created some new text files because the previous files are renamed
 * I have assummed to also show  hidden folders in home directory showing all files.
@@ -44,6 +46,7 @@ used `head` for first `n` pid
 ## Q8
 * I have made a main function to check for the `validity` for each field.
 * There are **two** `subsidiary functions` to be used for **validating the range** if given in the field or  the multiple values given by **commas**.
+* One more function to check for the `@yearly` type schedules.
 
 ## Q9
 * Trimmed the input then checked for any `illegal` character

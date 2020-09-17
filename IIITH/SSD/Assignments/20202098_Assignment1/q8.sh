@@ -33,6 +33,19 @@ fi
 
 }
 
+function wordcheck()
+{
+local str=$1
+local words="@yearly @weekly @daily @monthly @reboot @hourly"
+echo $words | grep -w -q "$str"
+ if (( $? == 0 ))
+   then
+   return 1
+   else
+   return 0
+ fi
+}
+
 function validate(){
 local str=$1
 local n=$2
@@ -203,7 +216,24 @@ k=${#ar[@]}
  flag=0
 if (( k != 6 ))
   then 
-    echo No
+     if (( k == 2 ))
+       then 
+        wordcheck "${ar[0]}"
+         if (( $?==1 ))
+           then 
+             validate "${ar[1]}" 5
+               if (( $?==1 ))
+                 then 
+                 echo Yes
+                 else
+                 echo No
+               fi
+            else
+            echo No
+         fi
+       else
+       echo No
+     fi
   else
     for i in ${!ar[@]}
      do

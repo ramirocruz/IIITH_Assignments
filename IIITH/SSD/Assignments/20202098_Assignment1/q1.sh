@@ -9,10 +9,13 @@ echo "lab3 111" >> lab3.txt
 echo "lab4 11" >> lab4.txt
 echo "lab5 1" >> lab5.txt
 #command end
-for i in *.txt
-do mv "$i" "${i%.txt}.c"
-done
+#looping command for rename
+#for i in *.txt
+#do mv "$i" "${i%.txt}.c"
+#done
 #rename.ul .txt .c *.txt
+#find command for rename
+find -name "*.txt" -exec sh -c 'file="{}"; mv -- "$file" "${file%.txt}.c"' \;
 ls -lSr | grep -v ^d
 #creating text files for displaying
 touch tmp1.txt tmp2.txt tmp3.txt
