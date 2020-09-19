@@ -41,36 +41,27 @@ class Stack{
 };
 
 void trim(string& s)
-{
-    string temp="";
+{   string temp;
+    bool dig=false;
     for(int i=0;i<s.size();i++)
     {
-        if(s[i]==' ')
-        continue;
-        if(s[i]=='+' || s[i]=='-' || s[i]=='*' || s[i]=='/' || s[i]=='%')
-        {
-            if(temp[temp.size()-1] == ')')
-            {
-                temp.pop_back();
-                temp+='|';
-                temp+=')';
-                temp+=s[i];
-                continue;
-            }
-            temp+='|';
-            temp+=s[i];
-            // cout<<'#'+s[i];
-            continue;
-        }
-        temp+=s[i];
+       if(s[i]==' ')
+       continue;
+
+       if(isdigit(s[i]))
+       {
+           while(i<s.size() && isdigit(s[i]) || s[i]=='.')
+           {
+               temp+=s[i];
+               i++;
+           }
+           i--;
+           temp+='|';
+       }
+       else
+       temp+=s[i];
     }
-    if(temp[temp.size()-1] == ')')
-    {temp.pop_back();
-    temp+='|';
-    temp+=')';}
-    else
-    temp+='|';
- s=temp;
+    s=temp;
 }
 int prec(char c)
 {
@@ -190,12 +181,11 @@ int main()
 {
 
 string s;
-// getline(cin,s);
-// trim(s);
+getline(cin,s);
+trim(s);
 // cout<<s<<endl;
-// long double ans =eval(s);
-long double ans=2.999999999999;
-cout << fixed << setprecision(9) << ans << endl;
+long double ans =eval(s);
+printf("%0.9Lf\n",ans);
   
 
 return 0;

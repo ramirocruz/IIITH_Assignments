@@ -27,38 +27,6 @@ void trim(string& s)
         
 
     }
-
-class BigInt{
-    public:
-    string data;
-
-    
-    unsigned long long size()
-    {
-        return this->data.size();
-    }
-    BigInt(){
-        this->data="0";
-    }
-    BigInt(string s)
-    {
-        trim(s);
-        this->data = s;
-    }
-   void operator = (const BigInt &d)
-   {
-     
-     this->data = d.data;
-     
-    }
-     void operator = (const string &s)
-    {      
-     this->data = s;   
-     trim(this->data);
-    }
-    
-};
-
 string multiply(string a,string b)
 {
    string& op1=a;
@@ -98,7 +66,7 @@ string multiply(string a,string b)
    }
 
    
-  
+ 
    return ans;
  }
 string   add(string a,string b)
@@ -136,7 +104,7 @@ string   add(string a,string b)
         else
         ans = ans.substr(1);
         
-   
+    
     return ans;
     
 }
@@ -190,241 +158,121 @@ string   subtract(string a,string b)
         }        
       
         
-  
+   
     return ans;
     
 }
 
-string divide(string op1,string op2)
+
+class BigInt{
+    public:
+    string data;
+
+    
+    unsigned long long size()
+    {
+        return this->data.size();
+    }
+    BigInt(){
+        this->data="0";
+    }
+    BigInt(string s)
+    {
+        trim(s);
+        this->data = s;
+    }
+   void operator = (const BigInt &d)
+   {
+     
+     this->data = d.data;
+     
+    }
+     void operator = (const string &s)
+    {      
+     this->data = s;   
+     trim(this->data);
+    }
+    
+};
+
+istream & operator >> (istream &in,  BigInt &d)
 {
-    int n1=op1.size();
-    int n2 = op2.size();
-    if(op2=="0")
-    {
-        cout<<"\nError divide by 0.....\n";
-        exit(-1);
-    }
-
-    if(n1 < n2)
-    return "0";
-    else if(n1==n2)
-    {
-        if(op1 < op2)
-        return "0";
-    }
-    
-string rem="0";
-string ans;
-    int i=0;
-    bool firstpass=true;
-    while(i<n1){
-    int pos_i=i;
-    string temp;
-    if(rem=="0")
-    {
-        // cout<<"rem==0 :  IN\n";
-    while(i<n1 && op1[i]=='0')
-    {
-        ans+='0';
-        i++;
-    }
-    // cout<<"i : "<<i<<endl;
-    if(i==n1)
-    return ans;
-    pos_i =i;
-    temp = op1.substr(i,n2);
-    // cout<<"temp: "<<temp<<endl;
-    i+=n2;
-    // cout<<"rem==0 :  OUT\n";
-    }
-    else
-    {
-        // cout<<"rem!=0 :  IN\n";
-        // cout<<rem.size()<<" rem size:i "<<i<<endl;
-    temp += rem ;
-    temp+= op1.substr(i,n2 - rem.size());
-    i+=n2-rem.size();
-    // cout<<"temp: "<<temp<<endl;
-    // cout<<"rem!=0 :  OUT\n";
-    }
-
-    if(temp<op2) 
-    {   
-    //    cout<<"temp<op2 :  IN\n";
-        if(i<n1)
-        temp+=op1[i++];
-        else
-        return ans;
-
-        // cout<<"temp<op2 :  OUT\n";
-    }
-    // cout<<"temp: and i : "<<temp<<" "<<i<<endl;
-    if(!firstpass)
-    for(int k=0;k<(i-1-pos_i);k++)
-    ans+='0';
-    
-    bool check=false;
-    string prev="1",prevans="0";
-    for(int j=1;j<10;j++)
-    {
-        // cout<<"inside loop : \n";
-        string n=to_string(j);
-       string tempans = add(prevans,op2);
-        trim(tempans);
-        // cout<<tempans<<"   tempans:n  "<<n<<endl;
-        
-        if(tempans.size() < temp.size())
-        {
-            //    cout<<"tempans size < temp size\n";
-            prev =n;
-            prevans=tempans;
-        }
-        else
-        {
-            // cout<<"tempans size  !< temp size \n";
-            
-           if(tempans.size() == temp.size() && tempans <= temp)
-           {   
-            //    cout<<"tempans <= temp\n";
-               prev = n;
-               prevans = tempans;
-           }
-           else
-           {
-            //    cout<<"tempans > temp\n";
-               ans+=prev;
-               check=true;
-               break;
-           }
-           
-        }
-    }
-    // cout<<"Outside loop \n"<<endl;
-    if(!check)
-    ans+=prev;
-    // cout<<" ans : "<<ans<<endl;
-    rem = subtract(temp,prevans);
-    trim(rem);
-    // cout<<"rem : "<<rem<<" : prev : "<<prev<<endl;
-    firstpass =false;
-    }
-    return ans;
+    in>>d.data;
+    return in;
 }
-string modulo(string op1,string op2)
+  ostream & operator << (ostream &out,  const BigInt &d)
 {
-    int n1=op1.size();
-    int n2 = op2.size();
-    if(op2=="0")
-    {
-        cout<<"\nError divide by 0.....\n";
-        exit(-1);
-    }
-
-    if(n1 < n2)
-    return op1;
-    else if(n1==n2)
-    {
-        if(op1 < op2)
-        return op1;
-    }
-    
-string rem="0";
-string ans;
-    int i=0;
-    bool firstpass=true;
-    while(i<n1){
-    int pos_i=i;
-    string temp;
-    if(rem=="0")
-    {
-        // cout<<"rem==0 :  IN\n";
-    while(i<n1 && op1[i]=='0')
-    {
-        ans+='0';
-        i++;
-    }
-    // cout<<"i : "<<i<<endl;
-    if(i==n1)
-    return rem;
-    pos_i =i;
-    temp = op1.substr(i,n2);
-    // cout<<"temp: "<<temp<<endl;
-    i+=n2;
-    // cout<<"rem==0 :  OUT\n";
-    }
-    else
-    {
-        // cout<<"rem!=0 :  IN\n";
-        // cout<<rem.size()<<" rem size:i "<<i<<endl;
-    temp += rem ;
-    temp+= op1.substr(i,n2 - rem.size());
-    i+=n2-rem.size();
-    // cout<<"temp: "<<temp<<endl;
-    // cout<<"rem!=0 :  OUT\n";
-    }
-
-    if(temp<op2) 
-    {   
-    //    cout<<"temp<op2 :  IN\n";
-        if(i<n1)
-        temp+=op1[i++];
-        else
-        return rem;
-
-        // cout<<"temp<op2 :  OUT\n";
-    }
-    // cout<<"temp: and i : "<<temp<<" "<<i<<endl;
-    if(!firstpass)
-    for(int k=0;k<(i-1-pos_i);k++)
-    ans+='0';
-    
-    bool check=false;
-    string prev="1",prevans="0";
-    for(int j=1;j<10;j++)
-    {
-        // cout<<"inside loop : \n";
-        string n=to_string(j);
-       string tempans = add(prevans,op2);
-        trim(tempans);
-        // cout<<tempans<<"   tempans:n  "<<n<<endl;
-        
-        if(tempans.size() < temp.size())
-        {
-            //    cout<<"tempans size < temp size\n";
-            prev =n;
-            prevans=tempans;
-        }
-        else
-        {
-            // cout<<"tempans size  !< temp size \n";
-            
-           if(tempans.size() == temp.size() && tempans <= temp)
-           {   
-            //    cout<<"tempans <= temp\n";
-               prev = n;
-               prevans = tempans;
-           }
-           else
-           {
-            //    cout<<"tempans > temp\n";
-               ans+=prev;
-               check=true;
-               break;
-           }
-           
-        }
-    }
-    // cout<<"Outside loop \n"<<endl;
-    if(!check)
-    ans+=prev;
-    // cout<<" ans : "<<ans<<endl;
-    rem = subtract(temp,prevans);
-    trim(rem);
-    // cout<<"rem : "<<rem<<" : prev : "<<prev<<endl;
-    firstpass =false;
-    }
-    return rem;
+    out<<d.data;
+    return out;
 }
+
+
+bool operator < (BigInt a,BigInt b)
+{
+    if(a.size() < b.size())
+    return true;
+    if(a.size() == b.size())
+    return (a.data < b.data);
+    return false;
+} 
+bool operator > (BigInt a,BigInt b)
+{
+    if(a.size() < b.size())
+    return false;
+    if(a.size() == b.size())
+    return (a.data > b.data);
+    return true;
+} 
+bool operator <= (BigInt a,BigInt b)
+{
+    if(a.size() < b.size())
+    return true;
+    if(a.size() == b.size())
+    return (a.data <= b.data);
+    return false;
+} 
+bool operator >= (BigInt a,BigInt b)
+{
+    if(a.size() < b.size())
+    return false;
+    if(a.size() == b.size())
+    return (a.data >= b.data);
+    return true;
+} 
+bool operator == (BigInt a,BigInt b)
+{
+    if(a.size() < b.size())
+    return false;
+    if(a.size() == b.size())
+    return (a.data == b.data);
+    return false;
+} 
+bool operator == (BigInt a,string b)
+{
+    if(a.size() < b.size())
+    return false;
+    if(a.size() == b.size())
+    return (a.data == b);
+    return false;
+} 
+bool operator == (string a,BigInt b)
+{
+    if(a.size() < b.size())
+    return false;
+    if(a.size() == b.size())
+    return (a == b.data);
+    return false;
+} 
+bool operator != (BigInt a,BigInt b)
+{
+    if(a.size() < b.size())
+    return true;
+    if(a.size() == b.size())
+    return (a.data != b.data);
+    return true;
+} 
+
+
 BigInt  operator * (BigInt a,BigInt b){
     
     BigInt temp= multiply(a.data,b.data);
@@ -495,6 +343,105 @@ BigInt&  operator -- (BigInt &a,int){
     a = subtract(a.data,"1");
     return a;
 }
+
+
+string divide(string op1,string op2)
+{
+    int n1=op1.size();
+    int n2=op2.size();
+  
+    if(op2=="0")
+    {
+        cout<<"\nError divide by 0.....\n";
+        exit(-1);
+    }
+
+    if(n1 < n2)
+    return "0";
+    else if(n1==n2)
+    {
+        if(op1 < op2)
+        return "0";
+    }
+    string ans,rem;
+    int pos = n2-1; 
+    string temp = op1.substr(0,n2);
+    if(temp<op1)
+    {temp+=op1[n2];
+    pos=n2;} 
+
+    while (pos < op1.size()) {
+ 
+        int i=1;BigInt tempop(op2);
+        for(;i<10;i++)
+        {     
+              if(tempop > temp)
+               break;
+             tempop+=op2;
+        }
+        i--;          
+        ans += i + '0';
+        tempop-=op2;
+        tempop = temp - tempop;
+        rem=tempop.data;
+        if(rem=="0")
+        temp=op1[++pos];
+        else
+        temp=rem+op1[++pos];
+         
+    } 
+  
+   return ans;
+}
+
+string modulo(string op1,string op2)
+{
+    int n1=op1.size();
+    int n2=op2.size();
+  
+    if(op2=="0")
+    {
+        cout<<"\nError divide by 0.....\n";
+        exit(-1);
+    }
+
+    if(n1 < n2)
+    return op1;
+    else if(n1==n2)
+    {
+        if(op1 < op2)
+        return op1;
+    }
+    string rem;
+    int pos = n2-1; 
+    string temp = op1.substr(0,n2);
+    if(temp<op1)
+    {temp+=op1[n2];
+    pos=n2;} 
+
+    while (pos < op1.size()) {
+ 
+        int i=1;BigInt tempop(op2);
+        for(;i<10;i++)
+        {     
+              if(tempop > temp)
+               break;
+             tempop+=op2;
+        }
+
+        tempop-=op2;
+        tempop = temp - tempop;
+        rem=tempop.data;
+        if(rem=="0")
+        temp=op1[++pos];
+        else
+        temp=rem+op1[++pos];
+         
+    } 
+  
+   return rem;
+}
+
 BigInt operator / (BigInt a,BigInt b)
 {
     BigInt temp = divide(a.data,b.data);
@@ -545,85 +492,11 @@ BigInt& operator %= (BigInt& a,string b)
     a = modulo(a.data,b);
     return a;
 }
-istream & operator >> (istream &in,  BigInt &d)
-{
-    in>>d.data;
-    return in;
-}
-  ostream & operator << (ostream &out,  const BigInt &d)
-{
-    out<<d.data;
-    return out;
-}
-bool operator < (BigInt a,BigInt b)
-{
-    if(a.size() < b.size())
-    return true;
-    if(a.size() == b.size())
-    return (a.data < b.data);
-    return false;
-} 
-bool operator > (BigInt a,BigInt b)
-{
-    if(a.size() < b.size())
-    return false;
-    if(a.size() == b.size())
-    return (a.data > b.data);
-    return true;
-} 
-bool operator <= (BigInt a,BigInt b)
-{
-    if(a.size() < b.size())
-    return true;
-    if(a.size() == b.size())
-    return (a.data <= b.data);
-    return false;
-} 
-bool operator >= (BigInt a,BigInt b)
-{
-    if(a.size() < b.size())
-    return false;
-    if(a.size() == b.size())
-    return (a.data >= b.data);
-    return true;
-} 
-bool operator == (BigInt a,BigInt b)
-{
-    if(a.size() < b.size())
-    return false;
-    if(a.size() == b.size())
-    return (a.data == b.data);
-    return false;
-} 
-bool operator == (BigInt a,string b)
-{
-    if(a.size() < b.size())
-    return false;
-    if(a.size() == b.size())
-    return (a.data == b);
-    return false;
-} 
-bool operator == (string a,BigInt b)
-{
-    if(a.size() < b.size())
-    return false;
-    if(a.size() == b.size())
-    return (a == b.data);
-    return false;
-} 
-bool operator != (BigInt a,BigInt b)
-{
-    if(a.size() < b.size())
-    return true;
-    if(a.size() == b.size())
-    return (a.data != b.data);
-    return true;
-} 
 
 
 
 BigInt gcd(BigInt a,BigInt b)
-{
+{   
     BigInt Z("0");
     if(a == Z)
      return b;
@@ -694,7 +567,6 @@ int main()
 
    cout<<ans<<'\n';
  }
-
 return 0;
 }
 

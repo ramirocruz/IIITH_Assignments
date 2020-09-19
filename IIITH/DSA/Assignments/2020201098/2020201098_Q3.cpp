@@ -159,8 +159,25 @@ void clear()
   
 }
 void resize(int n,T data)
-{
-    if(n<s)
+{   if(n==0)
+    clear();
+    else if(s==0)
+    {
+    if(n>cap)
+    {
+       delete[] head;
+       cap = 2*n;
+       head= new T[cap];
+    }     
+    fptr = 0;bptr = n-1;
+    for(int i=0;i<n;i++)
+    {
+      head[i] = data;
+    }  
+
+    s=n;
+    }
+    else if(n<s)
     {
         bptr = (fptr + n-1)%cap;
         s=n;
