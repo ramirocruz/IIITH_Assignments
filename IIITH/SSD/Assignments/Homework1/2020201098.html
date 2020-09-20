@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Aframehomework</title>    
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+  </head>  
+  <body>
+   
+ <a-scene background="color: lightblue">
+   <a-box position="-50 -0.5 0" color="green"
+          width="500"
+          height="0.001"
+          depth="500"
+          roughness="0.8"
+          ></a-box>
+     
+  <a-sphere
+            position="3000 -200 -2000"
+            color="green"
+            roughness="0.9"
+            scale="5 1 1"
+            radius="500"
+            ></a-sphere> 
+    <a-sphere
+            position="-3000 -400 -2000"
+            color="green"
+            roughness="0.9"
+            scale="5 1 1"
+            radius="500"
+            ></a-sphere> 
+   <a-sphere
+            position="-3000 -350 1000"
+            color="green"
+            roughness="0.9"
+            scale="5 1 1"
+            radius="500"
+            ></a-sphere> 
+   
+      <a-box position="0 0 0" color="black"  
+             width="5"
+             height="0.001"
+             depth="500"
+             >
+        <a-cylinder 
+                    roughness="0.9"
+                    width="800"
+                    open-ended="true" 
+                    color="brown"
+                    radius="2.5"
+                    position="0 0 0"
+                    scale="1 30 1.25"
+                    side="double"
+                    rotation="90 0 0"></a-cylinder>       
+        
+        <a-box position="0 0.1 45" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+        <a-box position="0 0.1 35" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+        <a-box position="0 0.1 25" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+        <a-box position="0 0.1 15" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+        <a-box position="0 0.1 5" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+        <a-box position="0 0.1 -5" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+        <a-box position="0 0.1 -15" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+        <a-box position="0 0.1 -25" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+        <a-box position="0 0.1 -35" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+        <a-box position="0 0.1 -45" width="0.5" height="0.005" depth="3" side="double" color="white"></a-box>
+   </a-box>
+   
+   
+
+    </a-scene>
+    
+  </body>
+</html>
+
