@@ -25,10 +25,41 @@ void clear(void);
 void display(void);
 void cursor(void);
 void getTerminalHeight(int);
+
 bool comp(const vector<string>&a,const vector<string>&b)
 {
      return a[5] < b[5];
 }
+
+/******************************************************
+*******************************************************
+ Get Cursor Position
+*******************************************************
+*******************************************************/
+int get_cursor_pos(int &len) {
+ string str;
+ len=0;
+ char c=0;
+ write(1, "\033[6n", 4);
+
+ for( int i = 0; c != 'R'; i++ )
+ {
+    if(read(STDIN_FILENO,&c,1)==-1)
+    {
+        return 1;
+    }
+   str+=c;
+ }
+if(str.size()<2)
+return 1;
+
+for(int i=2;str[i]!=';';i++)
+{
+    len = len*10 + (str[i] - '0');
+}
+return 0;
+}
+
 
 /******************************************************
 *******************************************************
@@ -65,7 +96,8 @@ void getTerminalHeight(int sig)
  void clear()
 {
 
-   printf("\x1b[2J\x1b[1;1H");
+//    printf("\x1b[2J\x1b[1;1H");
+   printf("\033c");
 
 // system("clear");
 }
@@ -160,26 +192,6 @@ void Termios_init()
 
 /******************************************************
 *******************************************************
-    Raw Mode On With input timeout
-*******************************************************
-*******************************************************/
-
-void Raw_on_timeout()
-{   
-    
-    
-    tcflush(STDIN_FILENO, TCIFLUSH);
-    if((tcsetattr(STDIN_FILENO,TCSANOW,&raw_timeout)) == -1)
-    {
-       
-        onend("raw timeout");
-    }
-}
-
-
-
-/******************************************************
-*******************************************************
     Raw Mode On
 *******************************************************
 *******************************************************/
@@ -270,6 +282,7 @@ FILES_LEN = files_list.size();
 CURSOR=1;
 }
 
+
 /******************************************************
 *******************************************************
    Display Function using vector of files details
@@ -346,11 +359,10 @@ void forwardmotion()
 *******************************************************
 *******************************************************/
 
-bool goto_cmd(string &path,string &stats)
+bool goto_cmd(string &path)
 {
     pathresolver(path);
     string temp = get_current_dir_name();
-    stats = temp + "   " + path;
     if(temp == path)
     return true;
     if(path.size()<rootname.size())
@@ -360,8 +372,11 @@ bool goto_cmd(string &path,string &stats)
     return false;
 
     backstack.push(temp);
+    if(forwardstack.size())
+    {
     stack<string>s;
     forwardstack.swap(s);
+    }
     createdirbuffer();
     display();
     return true;
@@ -417,59 +432,115 @@ void gotoparent()
 *******************************************************/
 string parsecommand(vector<string>&args)
 {
+   if(args.size()<2)
+   return "INVALID COMMAND OR ARGUMENTS...";
    string cmd=args[0];
    string destination=args[args.size()-1];
+   pathresolver(destination);
    args.erase(args.begin()); 
-   
+  
  if(cmd=="copy")
  {
    args.pop_back();
-   if(copy_cmd(args,destination))
-   return "Copied";
+   if(args.size())
+   {
+       if(copy_cmd(args,destination))
+       return "Copied";
+       return "Failed";
+   }
    return "Invalid arguments";
  }
  else if(cmd=="move")
  {
    args.pop_back();
-   move_cmd(args,destination);   
-   return "Moved";
+   if(args.size())
+   {
+       if(move_cmd(args,destination))   
+       return "Moved";
+       return "Failed";
+   }
+   return "Invalid arguments";
  }
  else if(cmd=="rename")
- {
-   rename_cmd(args[0],args[1]);
-   return "Renamed";
+ { 
+   if(args.size()==2)
+   {
+        if(rename_cmd(args[0],args[1]))
+        return "Renamed";
+        return "Failed";
+   }
+   return "Invalid arguments";
  }
  else if(cmd=="create_file")
  {
-   if(createfile_cmd(destination))
-   return "Success";
+   if(args.size()==2)
+   {
+        if(createfile_cmd(args[0],destination))
+        return "Success";
+        return "Failed";
+   }
+   else if(args.size()==1)
+   {
+        destination=get_current_dir_name();
+        if(createfile_cmd(args[0],destination))
+        return "Success";
+        return "Failed";
+   }
    
-   return "Failed";
+   return "Invalid Arguments";
  }
  else if(cmd=="create_dir")
  {
-   if(create_dir_cmd(destination))
-   return "Success";
-   return "Failed";
+   if(args.size()==2)
+   {
+        if(create_dir_cmd(args[0],destination))
+        return "Success";
+        return "Failed";
+   }
+   else if(args.size()==1)
+   {
+        destination = get_current_dir_name();
+        if(create_dir_cmd(args[0],destination))
+        return "Success";
+        return "Failed";
+   }
+   return "Invalid Arguments";
  }
  else if(cmd=="delete_file")
- {    
-   remove_cmd(args);
-   return "Removed";
+ {  
+   if(args.size()==1)
+   {  
+        if(remove_file_util(args[0]))
+        return "Removed";
+        return "Failed";
+   }
+   return "Invalid Arguments";
  }
  else if(cmd=="delete_dir")
  {
-   remove_cmd(args);
-   return "Removed";
+   if(args.size()==1)
+   {
+        if(remove_dir_util(args[0]))
+        return "Removed";
+        return "Failed";
+   }
+   return "Invalid Arguments";
  }
  else if(cmd=="goto")
- { string temp;
-   if(goto_cmd(args[0],temp));
-   return "DONE"+temp;
-   return "INVALID PATH"+temp;
+ { 
+   if(args.size()>1)
+   return "Invalid Arguments";
+
+   string temp;
+   if(goto_cmd(args[0]))
+   return "DONE";
+   return "INVALID PATH";
  }
  else if(cmd=="search")
  {
+    if(args.size()>1)
+    return "Invalid Arguments";
+
     string currentpath=get_current_dir_name();
    if(search_dir_recursive_cmd(currentpath,args[0]))
     return "FOUND";
@@ -575,8 +646,8 @@ void commandmode()
   while(true)
   {
   printf("\x1b[%d;1HEnter your Command:\n",TERMINAL_LEN-1);
-  char arr[]=">>>";
-  write(STDOUT_FILENO,&arr,3);
+  char arr[]=">>> ";
+  write(STDOUT_FILENO,&arr,sizeof(arr));
   string inp;
   inp=cmodecursor();
    if(inp=="00")
@@ -610,13 +681,12 @@ void cursor()
 {  
 
 char c[4]={0};
+int c_Y;
 
 while (true)
 {
   c[1]=c[2]=0;
   read(STDIN_FILENO,&c,3);
-
-
   if(c[0]==10)
   {
      if(CURSOR < pagesize+1)
@@ -629,10 +699,15 @@ while (true)
      
      if(c[1]==91)
      {
-         
+         get_cursor_pos(c_Y);
          switch (c[2])
          {
-         case 'A': if(CURSOR > 1)
+         case 'A':   if(c_Y>pagesize+1)
+                     {
+                      char ab[]="\x1b[A";
+                      write(STDOUT_FILENO,&ab,sizeof(ab)); 
+                     }
+                     if(CURSOR > 1)
                      {                            
                          CURSOR--;                    
                       
@@ -703,6 +778,17 @@ while (true)
 }
 
 
+/******************************************************
+*******************************************************
+                Main Function
+*******************************************************
+*******************************************************
+*******************************************************
+                Main Function Begin
+*******************************************************
+*******************************************************/
+
+
 int main()
 {
     Termios_init();
@@ -717,20 +803,36 @@ Raw_on();
 while (true)
 {
 
-
+start:
 createdirbuffer();
-
 display();
 cursor();
 string temp = files_list[SCROLL_POINTS+CURSOR-1][5];
-char strarr[temp.size()+1];
-strcpy(strarr,temp.c_str());
+
 
 string histdir=get_current_dir_name();
-if(chdir(strarr)!=-1)
+if(chdir(temp.c_str())!=-1)
  {
      backstack.push(histdir);
  }
+ else
+ {
+    int pid = fork();
+    
+    if (pid == 0) 
+    {
+
+       
+        execl("/usr/bin/xdg-open", "xdg-open",temp.c_str(), (char *)0);
+        Raw_off();
+        exit(1);
+    }
+    
+    
+   
+ 
+ }
+ 
 }
 
 
@@ -738,3 +840,16 @@ Raw_off();
 
 return 0;
 }
+
+
+
+
+/******************************************************
+*******************************************************
+                Main Function
+*******************************************************
+*******************************************************
+*******************************************************
+                Main Function End
+*******************************************************
+*******************************************************/

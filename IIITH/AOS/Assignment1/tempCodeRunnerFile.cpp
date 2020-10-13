@@ -1,2 +1,0 @@
-createdirbuffer();
-//    display();
