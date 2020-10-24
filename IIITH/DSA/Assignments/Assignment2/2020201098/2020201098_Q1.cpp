@@ -6,12 +6,14 @@ struct Node
     T key;
     int height;
     int count;
+    int netcount;
     Node *left,*right;
     Node(T k)
     {
         key=k;
         height=0;
         count=1;
+        netcount=1;
         left=NULL;
         right=NULL;
     }
@@ -65,6 +67,38 @@ class AVLTree
         return 0;
         return (height_util(p->left)-height_util(p->right));
     }
+    int get_netcount(Node<T>*p)
+    {
+        if(p==NULL)
+        return 0;
+        return p->netcount;
+    }
+
+    int get_count(Node<T>*p)
+    {
+        if(p==NULL)
+        return 0;
+        return get_count(p->left) + get_count(p->right) + p->count;
+    }
+    
+    Node<T>* get_common_ancestor_util(Node<T>*p,T low,T high)
+    {
+        if(p==NULL)
+        return p;
+        if(comp(low,p->key) && comp(high,p->key))
+        {
+            return get_common_ancestor_util(p->left,low,high);
+        }
+        else if(comp(p->key,low) && comp(p->key,high))
+        {
+            return get_common_ancestor_util(p->right,low,high);
+        }
+        else
+        {
+            return p;
+        }
+    }
+
     Node<T>* right_rotation_util(Node<T>* p)
     {
        auto temp = p->left;       
@@ -96,6 +130,7 @@ class AVLTree
         if(eql(p->key,Data->key))
         {
             (p->count)++; 
+            (p->netcount)++;
             size_val++;           
             return p;
         }
@@ -134,6 +169,7 @@ class AVLTree
             p->right = right_rotation_util(p->right);
             return left_rotation_util(p);
         }
+        p->netcount = get_count(p);
         return p;
       
     }
@@ -299,6 +335,7 @@ class AVLTree
             if(p->count>1)
             {
                 (p->count)--;
+                (p->netcount)--;
                 return p;
             }
 
@@ -378,6 +415,7 @@ class AVLTree
             p->right = right_rotation_util(p->right);
             return left_rotation_util(p);
         }
+        p->netcount = get_count(p);
         return p;
       
 
@@ -400,7 +438,7 @@ class AVLTree
          if(p==NULL)
          return;
          inorder_util(p->left);
-         cout<<p->key<<" --- "<<p->count<<endl;
+         cout<<p->key<<" --- "<<p->count<<" --- "<<p->netcount<<endl;
          inorder_util(p->right);
     }
 
@@ -421,7 +459,25 @@ class AVLTree
 
          return rev_inorder_util(p->left,k,count);
     }
-
+    
+    Node<T> * largest_util(Node<T>*p,int k)
+    {
+        if(p==NULL)
+        return p;
+        int rcount = get_netcount(p->right);
+        if(rcount < k && k <= rcount + p->count)
+        return p;
+        if(k > rcount + p->count)
+        {
+            k-= rcount+p->count;
+            return largest_util(p->left,k);
+        }
+        else
+        {
+            
+            return largest_util(p->right,k);
+        }
+    }
 
     public:
     AVLTree()
@@ -464,7 +520,15 @@ class AVLTree
     }
     int count_range(T low,T high)
     {
-        return count_range_util(root,low,high);
+        // return count_range_util(root,low,high);
+        auto lower = lower_bound_util(root,low);
+        auto higher = inverse_lower_bound_util(root,high);
+        if(lower != NULL && higher !=NULL)
+        {
+          auto total = get_common_ancestor_util(root,low,high);
+          return total->netcount - (get_netcount(lower->left) + get_netcount(higher->right)); 
+        }
+        return 0;
     }
     Node<T>* lower_bound(T k)
     {
@@ -493,8 +557,9 @@ class AVLTree
     }
     Node<T>* largest(int k)
     {
-        int count=0;
-        return rev_inorder_util(root,k,count);        
+        // int count=0;
+        // return rev_inorder_util(root,k,count);  
+        return largest_util(root,k);      
     }
     int size()
     {
@@ -515,9 +580,9 @@ int main()
 {
 ios_base::sync_with_stdio(false);
 
-AVLTree<string> tree;
-Node<string>*temp=NULL;
-string data,low,high;
+AVLTree<int> tree;
+Node<int>*temp=NULL;
+int data,low,high;
 int k,mode,Q;
 cin>>Q;
 while(Q--)
@@ -564,7 +629,7 @@ while(Q--)
             break;
 
     case 7: cin>>data;
-            cout<<tree.closest(data,test)<<endl;
+            cout<<tree.closest(data)<<endl;
             break;
 
     case 8: cin>>k;

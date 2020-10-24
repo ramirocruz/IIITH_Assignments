@@ -1,6 +1,9 @@
 #include<bits/stdc++.h>
-using namespace std;
 
+#define PRIME (104729)
+#define TABLE_SIZE (100003)
+using namespace std;
+ 
 template <class T,class D>
 struct Node
 {
@@ -21,7 +24,21 @@ struct Node
 template <class T>
 int hash_gen(T k)
 {
-    return 0;
+    long long hash=0;
+    stringstream stream;
+    stream << k;
+    // string str = to_string(k);
+    string str = stream.str();
+    int p=23;
+    
+    for(int i=0;i<str.size();i++)
+    {
+     hash =  hash*p + (int)str[i];     
+    }
+ long long a = 8, b= 619;
+ hash = ((a*hash + b)%PRIME)%TABLE_SIZE;
+
+ return hash;    
 }
 template<class T>
 struct Equal
@@ -46,33 +63,33 @@ class Unordered_map
            p[i]=NULL;
        }
     }
-    bool isloaded()
-    {
-        double ans = (double)size_val/table_size;
-        if(ans > 3)
-        return true;
-        return false;
-    }
-    void table_doubling()
-    {
-        // cout<<"Table doubling initiated.....\n";
-        Node<T,D> **temp=new Node<T,D>*[2*table_size];
-        init_table(temp,2*table_size);
-        for(int i=0;i<table_size;i++)
-        {
-            temp[i]=hash_map[i];
-            hash_map[i]=NULL;
-        }
-        delete [] hash_map;
-        hash_map=temp;
-        temp=NULL;
-        delete temp;
-        table_size*=2;
-    }
+    // bool isloaded()
+    // {
+    //     double ans = (double)size_val/table_size;
+    //     if(ans > 3)
+    //     return true;
+    //     return false;
+    // }
+    // void table_doubling()
+    // {
+    //     // cout<<"Table doubling initiated.....\n";
+    //     Node<T,D> **temp=new Node<T,D>*[2*table_size];
+    //     init_table(temp,2*table_size);
+    //     for(int i=0;i<table_size;i++)
+    //     {
+    //         temp[i]=hash_map[i];
+    //         hash_map[i]=NULL;
+    //     }
+    //     delete [] hash_map;
+    //     hash_map=temp;
+    //     temp=NULL;
+    //     delete temp;
+    //     table_size*=2;
+    // }
     public:
     Unordered_map()
     {
-        table_size=3;
+        table_size=TABLE_SIZE;
         hash_map= new Node<T,D> *[table_size];
         init_table(hash_map,table_size);
         size_val=0;
@@ -88,16 +105,20 @@ class Unordered_map
         else
         {
             auto p=hash_map[pos];
-            while(p->next != NULL)
+            while(p != NULL)
             {
-                if(eql(p->key,))
+                if(eql(p->key,k))
+                {
+                    p->data=d;
+                    return;
+                }
                 p=p->next;
             }
             p->next = temp;
         }
         size_val++;
-        if(isloaded())
-        table_doubling();
+        // if(isloaded())
+        // table_doubling();
     }
 
   int erase(T k)
@@ -233,5 +254,7 @@ while(Q--)
         
     }
 }
+
+
 return 0;
 }
