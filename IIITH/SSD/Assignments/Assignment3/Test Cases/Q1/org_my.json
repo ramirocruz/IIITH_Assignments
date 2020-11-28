@@ -1,0 +1,21 @@
+{
+    "L0": [
+    { "name": "X", "eid":1 }     
+    ],
+    "L1": [
+    { "name": "A","eid": 2 ,"parent": 1 },
+    { "name": "F","eid": 3, "parent": 1 }
+    ],
+    "L2": [
+    { "name": "B","eid":4, "parent": 2 },
+    { "name": "G","eid":5, "parent": 3 },
+    { "name": "H","eid":6, "parent": 3 }
+    ],
+    "L3": [
+    { "name": "C", "eid":7, "parent": 4 },
+    { "name": "D", "eid":8, "parent": 4 },
+    { "name": "E", "eid":9, "parent": 4 },
+    { "name": "I", "eid":10, "parent": 6 },
+    { "name": "J", "eid":11, "parent": 6 }
+    ]
+}

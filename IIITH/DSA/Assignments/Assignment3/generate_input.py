@@ -19,9 +19,9 @@ from math import ceil
 import sys
 import time
 
-n_values = 10
-n_digits = 2
-default_seed = 1337
+n_values = 1000000
+n_digits = 3
+default_seed = 1000
 BUFFER_SIZE = 100_000
 out_fname = "unsorted_file.txt"
 

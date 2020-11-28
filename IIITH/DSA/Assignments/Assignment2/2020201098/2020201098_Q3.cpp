@@ -353,7 +353,7 @@ bool operator ()(const int &a,const int &b)
     return to_string(a) < to_string(b);
 }
 };
-Map<int,int> test;
+// Map<int,int> test;
 Map<int, int> mp;
 	mp.insert(1, 2);
 	mp.insert(2, 2);

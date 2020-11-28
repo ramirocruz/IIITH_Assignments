@@ -1,0 +1,21 @@
+{
+"L0": [
+{ "name": "X" }
+],
+"L1": [
+{ "name": "A", "parent": "X" },
+{ "name": "F", "parent": "X" }
+],
+"L2": [
+{ "name": "B", "parent": "A" },
+{ "name": "G", "parent": "F" },
+{ "name": "H", "parent": "F" }
+],
+"L3": [
+{ "name": "C", "parent": "B" },
+{ "name": "D", "parent": "B" },
+{ "name": "E", "parent": "B" },
+{ "name": "I", "parent": "H" },
+{ "name": "J", "parent": "H" }
+ ]
+}
