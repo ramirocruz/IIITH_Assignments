@@ -1,0 +1,64 @@
+Assume end time to be on the same day as start time if given. If not given, set it to 23:59 of the same day.
+
+start_time could be HH:MM or "NOW". If HH:MM, schedule it at that time on the given day(if given). 
+If day is not given assume it to be today.
+
+start request()
+
+IF interval == "None":
+    
+    IF REPEAT == YES:
+        ##start_time could not be NOW
+        IF day == "":
+            run everyday at the given start time
+        else:
+            run on that day every week at the given start time 
+
+    ELSE:
+    ## if end time is not given, set end time at 23:59 on that day and stop the container only if it is running.
+        If day == "":
+            if start_time == "NOW":
+                start immediately
+            else:
+                start at start_time
+        else:
+            ##start_time could not be NOW
+            start on the given day at given start time
+
+else:
+    ## by default it repeats
+    job_id = schedule.every(interval).minutes.do(greet, name='Alice')
+    End time, day, etc does not matter
+
+return job_id
+
+stop request(job_id):
+    send stop request to deployer(path to config file)
+    schedule.cancel_job(job_id)
+
+
+Flask App(/scheduler):
+    
+    receive deployConfig path
+    read instance id
+    
+    see if the schedule request is start or stop
+    return error if invalid request
+
+    write the deployConfig to the shared file system
+    send that path to the deployer
+
+    if start:
+        job_id = call method for start schedule
+        overwrite the job id in the config file
+    else:
+        call method for end schedule
+        erase the config file stored in the file system
+
+
+run(json_obj, cancel_after_executing = True):
+    ## send this to deployer
+
+    if(cancel_after_executing):
+        schedule.cancel_job()
+        send delete_container(instance_id) to deployer

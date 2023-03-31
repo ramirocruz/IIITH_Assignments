@@ -1,0 +1,133 @@
+{
+    "protocol": {
+        "name": "rpc",
+        "version": 1.7
+    },
+    "function": {
+        "add": {
+            "name": "add",
+            "version": 1.7,
+            "count": 2,
+            "params": [
+                {
+                    "name": "op1",
+                    "type": "int"
+                },
+                {
+                    "name": "op2",
+                    "type": "int"
+                }
+            ],
+            "return": {
+                "count": 1,
+                "type": "int"
+            }
+        },
+        "sub": {
+            "name": "sub",
+            "version": 1.7,
+            "count": 2,
+            "params": [
+                {
+                    "name": "op1",
+                    "type": "int"
+                },
+                {
+                    "name": "op2",
+                    "type": "int"
+                }
+            ],
+            "return": {
+                "count": 1,
+                "type": "int"
+            }
+        },
+        "mult": {
+            "name": "mult",
+            "version": 1.7,
+            "count": 2,
+            "params": [
+                {
+                    "name": "op1",
+                    "type": "int"
+                },
+                {
+                    "name": "op2",
+                    "type": "int"
+                }
+            ],
+            "return": {
+                "count": 1,
+                "type": "int"
+            }
+        },
+        "div": {
+            "name": "div",
+            "version": 1.7,
+            "count": 2,
+            "params": [
+                {
+                    "name": "op1",
+                    "type": "int"
+                },
+                {
+                    "name": "op2",
+                    "type": "int"
+                }
+            ],
+            "return": {
+                "count": 1,
+                "type": "int"
+            }
+        },
+        "mod": {
+            "name": "mod",
+            "version": 1.7,
+            "count": 2,
+            "params": [
+                {
+                    "name": "op1",
+                    "type": "int"
+                },
+                {
+                    "name": "op2",
+                    "type": "int"
+                }
+            ],
+            "return": {
+                "count": 1,
+                "type": "int"
+            }
+        },
+        "inc": {
+            "name": "inc",
+            "version": 1.7,
+            "count": 1,
+            "params": [
+                {
+                    "name": "op1",
+                    "type": "int"
+                }
+            ],
+            "return": {
+                "count": 1,
+                "type": "int"
+            }
+        },
+        "avg": {
+            "name": "avg",
+            "version": 1.7,
+            "count": -1,
+            "params": [
+                {
+                    "name": "op1",
+                    "type": "int"
+                }
+            ],
+            "return": {
+                "count": 1,
+                "type": "int"
+            }
+        }
+    }
+}

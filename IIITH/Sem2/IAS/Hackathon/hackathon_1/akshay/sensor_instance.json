@@ -1,0 +1,24 @@
+{
+  "sensor1": {
+    "sensorType": "HumiditySensor",
+    "manufacturer": "abc",
+    "id": "1",
+    "ip": "127.0.0.1",
+    "port": "18000",
+    "attributes": {
+      "location": "hyderabad",
+      "randomkey": "123"
+    }
+  },
+  "sensor2": {
+    "sensorType": "PH_sensor",
+    "manufacturer": "abc",
+    "id": "1",
+    "ip": "127.0.0.1",
+    "port": "18002",
+    "attributes": {
+      "location": "delhi",
+      "randomkey": "123"
+    }
+  }
+}

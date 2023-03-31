@@ -1,0 +1,154 @@
+role reader (R, T, S: agent,
+            IDR, IDT, IDS,Balnew:text,
+            XRS:symmetric_key,
+            Hash: hash_func,
+            SND, RCV: channel (dy))
+played_by R def=
+local
+    State: nat,
+    ROT,RROT,SUB:hash_func,
+    RN, RA, RB, TR, CR, MR,SR,RQ,MP,MQ,CT,AuthR,MT,TT,Readercheck,SP,SQ,SS,TS: text
+init 
+    State:=0
+
+transition
+    1. State=0 /\ RCV(start) =|>
+        State':= 1 /\
+        RN' := new() /\
+        MR' := ROT( xor (RN',xor(IDT,TR)).xor(TR,IDT)) /\
+        CR' := Hash(MR'.RN'.IDT) /\
+        SND (MR'.CR'.TR)
+    2. State=1 /\ RCV(CT'.AuthR'.MT'.TT') =|>
+        State' := 2 /\
+        RA' := new() /\
+        RB' := new () /\
+        TR' := new() /\ 
+        MP' := xor(RA',xor(IDS, RB')) /\
+        MQ' := xor(XRS,RB') /\ 
+        Readercheck' := Hash (xor(xor (RA',IDS), xor(Balnew.RB',TR'))) /\
+        SND({MQ'.MP'.Readercheck'.TR'}_XRS)
+
+    3. State = 2 /\ RCV({SP'.SQ'.SS'.TS}_XRS) =|>
+        State' := 3 /\
+        SR' := RROT(xor(SQ',ROT(TS,XRS)).IDS) /\
+        RN' := new() /\
+        %%%%%%%% SP' = xor(ROT(TS.xor(IDS,XRS)),ROT(SR'.XRS)) /\
+        RQ' := xor(ROT(SR'.IDR),ROT(TS.RN')) /\
+        SND(SS'.RQ'.TS)
+end role
+
+
+role tag(T,R, S: agent,
+            IDR, IDT, IDS,Balbc,Balbcrec,Samt: text,
+            Hash: hash_func,
+            SND, RCV: channel (dy))
+played_by T def=
+local
+    State : nat,
+    ROT,RROT,SUM,SUB:hash_func,
+    Balnew,RN,CR,TT,CT,MT,MR,TR,AuthR,SS,RQ,TS,SR:text,
+    SKST:message
+
+init
+    State := 0
+%%%%%% Check for the CR'in the 1.
+transition
+    1. State =0 /\ RCV(MR'.CR'. TR) =|> 
+        State' := 1 /\
+        RN' := xor(RROT(MR'.xor(IDT,TR)),xor(IDT,TR)) /\
+        TT' := new() /\  Balnew' := SUM(Balbc.Samt) /\
+        CT' := Hash(xor(RN',xor(IDT,Balnew'))) /\
+        MT' := ROT(xor(RN',xor(IDS,TT')).xor(TT',IDT) ) /\
+        AuthR' := Hash(CT'.RN'.MT'.IDT.TT') /\
+        SND(CT'.AuthR'.MT'.TT')
+
+    2. State = 1 /\ RCV (SS'.RQ'.TS) =|>
+        State' := 2 /\
+        RN' := new() /\
+        SR' := RROT(xor( RQ' ,ROT(TS.RN')).IDR) /\
+        Balnew' := SUM(Balbc.Samt) /\
+        SKST' := Hash(xor(xor(IDT,Balnew'),xor(SR',IDS))) /\
+        secret(SKST',skst,{T,S})
+end role
+
+role supplychain (S, T, R: agent,
+            IDR, IDT, IDS,Samt,Balbcrec,Balbc: text,
+            XRS:symmetric_key,
+            Hash: hash_func,
+            SND, RCV: channel (dy))
+played_by S def=
+
+local
+    State : nat,
+    ROT,RROT,SUB:hash_func,
+    RB,RA,ScheckA,ScheckB,TS,SR,SP,SQ,SS,MQ,MP,Readercheck,TR:text,
+    SKST:message
+
+init 
+    State := 0
+
+transition
+    1.State = 0 /\ RCV(MQ'.MP'.Readercheck'.TR') =|>
+        State' := 1 /\
+        %%%%in(IDT,DB) /\
+        RB' := xor(XRS,MQ') /\
+        RA' := xor(MP',xor(IDS,RB')) /\
+        Balbcrec' := Balbc /\
+        SR' := new() /\
+        TS' := new() /\
+        SP' := xor(ROT(TS'.xor(IDS,XRS)), ROT(SR'.XRS)) /\
+        SQ' := xor(ROT(SR'.IDS),ROT(TS'.XRS)) /\
+        SKST' := Hash(xor(xor(IDT,Balbcrec'),xor(SR',IDS))) /\
+        SS' := Hash( SKST' . SR' . Balbcrec') /\
+        SND({SP'.SQ'.SS'.TS'}_XRS) /\
+        secret(SKST',skst,{S,T})
+
+
+
+    %%%%%2.State = 0 /\ RECV(MQ'.MP'.Readercheck'.TR') =|>
+       %%%%State' := 2
+        %%%%%not(in(IDT,DB))
+
+
+end role 
+        
+role session (S, R, T: agent,
+            Hash: hash_func,
+            XRS:symmetric_key)
+
+
+def=
+    local RSND, RRECV, SSND, SRECV, TSND, TRECV: channel (dy),
+    IDR,IDS,IDT,Samt,Balbcrec,Balbc,Balnew:text
+    composition
+        reader (R, T, S,IDR, IDT, IDS,Balnew,XRS,Hash,RSND,RRECV) /\
+        tag (T, R, S,IDR, IDT, IDS,Balbc, Balbcrec,Samt,Hash,TSND,TRECV) /\
+        supplychain (S, T, R,IDR, IDT, IDS,Samt,Balbcrec,Balbc,XRS,Hash,SSND,SRECV)
+end role
+
+
+role environment()
+def=
+const r,t,s: agent,
+        h,sum,sub,rot,rrot: hash_func,
+        idr,ids,idt: text,
+        xrs:symmetric_key,
+        skst: protocol_id
+
+
+    intruder_knowledge = {r,t,s, h,sum,sub,rot,rrot,idr,ids,idt}
+
+
+    composition
+        session(supplychain, reader, tag, h,xrs) /\
+        session(i, reader, tag, h,xrs) /\
+        session(supplychain, i, tag, h,xrs) /\
+        session(supplychain, reader, i, h,xrs)
+end role
+
+goal
+%%% Confidentiality (privacy)
+secrecy_of skst
+
+end goal
+environment()

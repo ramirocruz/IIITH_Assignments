@@ -1,0 +1,1 @@
+python merge_sort_thread.py "$@"

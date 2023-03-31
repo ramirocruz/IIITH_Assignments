@@ -1,0 +1,10 @@
+{
+    "request_type": "start/stop",
+    "start_time": "",
+    "end_time": "",
+    "day": "",
+    "interval": "",
+    "repeat": "yes/no",
+    "job_id": "123 exists only if request type is stop"
+}
+
